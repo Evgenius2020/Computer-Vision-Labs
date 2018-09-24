@@ -62,34 +62,30 @@ def hsv_to_rgb(hsv):
     v_inc = v_min + a
     v_dec = v - a
 
-    h_i = [{} for i in range(0, 6)]
-    h_i[0]['r'] = v
-    h_i[0]['g'] = v_inc
-    h_i[0]['b'] = v_min
-
-    h_i[1]['r'] = v_dec
-    h_i[1]['g'] = v
-    h_i[1]['b'] = v_min
-
-    h_i[2]['r'] = v_min
-    h_i[2]['g'] = v
-    h_i[2]['b'] = v_inc
-
-    h_i[3]['r'] = v_min
-    h_i[3]['g'] = v_dec
-    h_i[3]['b'] = v
-
-    h_i[4]['r'] = v_inc
-    h_i[4]['g'] = v_min
-    h_i[4]['b'] = v
-
-    h_i[5]['r'] = v
-    h_i[5]['g'] = v_min
-    h_i[5]['b'] = v_dec
-
     index = math.floor(h / 60) % 6
-    r = math.floor(h_i[index]['r'] * 255 / 100)
-    g = math.floor(h_i[index]['g'] * 255 / 100)
-    b = math.floor(h_i[index]['b'] * 255 / 100)
+    if (index == 0):
+        r = math.floor(v * 255 / 100)
+        g = math.floor(v_inc * 255 / 100)
+        b = math.floor(v_min * 255 / 100)
+    elif (index == 1):
+        r = math.floor(v_dec * 255 / 100)
+        g = math.floor(v * 255 / 100)
+        b = math.floor(v_min * 255 / 100)
+    elif (index == 2):
+        r = math.floor(v_min * 255 / 100)
+        g = math.floor(v * 255 / 100)
+        b = math.floor(v_inc * 255 / 100)
+    elif (index == 3):
+        r = math.floor(v_min * 255 / 100)
+        g = math.floor(v_dec * 255 / 100)
+        b = math.floor(v * 255 / 100)
+    elif (index == 4):
+        r = math.floor(v_inc * 255 / 100)
+        g = math.floor(v_min * 255 / 100)
+        b = math.floor(v * 255 / 100)
+    elif (index == 5):
+        r = math.floor(v * 255 / 100)
+        g = math.floor(v_min * 255 / 100)
+        b = math.floor(v_dec * 255 / 100)
 
     return (r, g, b)

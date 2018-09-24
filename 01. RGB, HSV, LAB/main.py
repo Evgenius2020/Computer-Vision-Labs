@@ -23,7 +23,7 @@ def add_button(surface, x_start, text, color):
 def main():
     pygame.init()
     lenna = pygame.image.load("Lenna.png")
-    surface = pygame.display.set_mode((lenna.get_height(), lenna.get_width()))
+    surface = pygame.display.set_mode((lenna.get_width(), lenna.get_height()))
     surface.blit(lenna, (0, 0))
 
     button_h_plus = add_button(surface, 0, "H+", [255, 0, 0])
