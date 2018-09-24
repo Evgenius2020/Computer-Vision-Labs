@@ -1,38 +1,41 @@
 import math
 
+
 def rgb_to_hsv(rgb):
-    r = rgb[0] / 360
-    g = rgb[1] / 360
-    b = rgb[2] / 360
+    r = rgb[0] / 256
+    g = rgb[1] / 256
+    b = rgb[2] / 256
 
     max_v = max(r, g, b)
     min_v = min(r, g, b)
     delta = max_v - min_v
 
-    if (max_v == min_v):
+    if max_v == min_v:
         h = 0
-    elif (max == r):
-        if (g >= b):
+    elif max_v == r:
+        if g >= b:
             h = 60 * (g - b) / delta
         else:
             h = 60 * (g - b) / delta + 360
-    elif (max == g):
+    elif max_v == g:
         h = 60 * (b - r) / delta + 120
     else:
-        h = 60 * (r - g) / delta + 240        
+        h = 60 * (r - g) / delta + 240
 
-    s = 0 if (max_v == 0) else 1 - min_v / max_v
+    s = 0 if max_v == 0 else 1 - min_v / max_v
     v = max_v
 
     return [h, s, v]
 
+
 def lab_f(x):
-    return x**(1 / 3) if (x > (2 / 29)**3) else (1 / 3) *((29 / 6)**2) * x + 4 / 29
+    return x**(1 / 3) if (x > (6 / 29)**3) else ((29 / 6)**2) / 3 * x + 4 / 29
+
 
 def rgb_to_lab(rgb):
-    r = rgb[0] / 360
-    g = rgb[1] / 360
-    b = rgb[2] / 360
+    r = rgb[0] / 256
+    g = rgb[1] / 256
+    b = rgb[2] / 256
 
     x = 2.768892 * r + 1.751748 * g + 1.13016 * b
     y = r + 4.5907 * g + 0.0601 * b
@@ -47,6 +50,7 @@ def rgb_to_lab(rgb):
     b = 200 * (lab_f(y / y_n) - lab_f(z / z_n))
 
     return [l, a, b]
+
 
 def hsv_to_rgb(hsv):
     h = hsv[0]
