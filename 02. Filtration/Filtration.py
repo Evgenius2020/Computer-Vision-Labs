@@ -1,5 +1,4 @@
-def extract_piece(image_hsv, size, x, y, x_max, y_max):
-    assert(size % 2 == 1)
+def extract_piece(image, size, pixel_component, x, y, x_max, y_max):
     piece = [[0] * size] * size
     delta = size // 2
     for i in range(0, size):
@@ -7,7 +6,7 @@ def extract_piece(image_hsv, size, x, y, x_max, y_max):
             if (x - delta + j < 0) or (x - delta + j > x_max - 1) or (y - delta + i < 0) or (y - delta + i > y_max - 1):
                 piece[i][j] = 0
             else:
-                piece[i][j] = image_hsv[x - delta + j][y - delta + i][2]
+                piece[i][j] = image[x - delta + j][y - delta + i][pixel_component]
     return piece
 
 

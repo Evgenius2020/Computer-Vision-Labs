@@ -24,7 +24,7 @@ def sobel(image):
     for x in range(0, image.width):
         for y in range(0, image.height):
             filtereredV = filter(
-                extract_piece(hsv_matr, 3, x, y, image.width, image.height))
+                extract_piece(hsv_matr, 3, 2, x, y, image.width, image.height))
             pixels[x, y] = hsv_to_rgb((0, 0, filtereredV))
 
     return buf
