@@ -9,8 +9,8 @@ def main():
         exit()
     filename = sys.argv[1]
     lenna = Image.open(filename)
-    sobel(lenna).show()
-    # gauss(lenna, 5).show()
+    #sobel(lenna).show()
+    gauss(lenna, 5).show()
 
 if __name__ == '__main__':
     main()

@@ -1,8 +1,8 @@
 import math
 from Convertations import hsv_to_rgb, rgb_to_hsv
-from Filtration import extract_piece, apply_filter
+from Filtration import apply_filter
 
-SIGMA = 5
+SIGMA = 2
 
 
 def calculate_kernel(size):
@@ -10,7 +10,7 @@ def calculate_kernel(size):
     kernel = [[0] * size] * size
     for y in range(0, size):
         for x in range(0, size):
-            kernel[x][y] = 1 / (2 * math.pi * SIGMA ** 2) * \
+            kernel[y][x] = 1 / (2 * math.pi * SIGMA ** 2) * \
                 math.exp(-((x - delta)**2 + (y - delta)**2) / (2 * SIGMA**2))
 
     return kernel
@@ -30,17 +30,14 @@ def gauss(image, kernel_size):
 
     for x in range(0, image.width):
         for y in range(0, image.height):
-            filtereredR = apply_filter(extract_piece(
-                buf_matr, kernel_size, 0, x, y, image.width, image.height), kernel, kernel_size)
-            filtereredG = apply_filter(extract_piece(
-                buf_matr, kernel_size, 1, x, y, image.width, image.height), kernel, kernel_size)
-            filtereredB = apply_filter(extract_piece(
-                buf_matr, kernel_size, 2, x, y, image.width, image.height), kernel, kernel_size)
+            filtereredR = apply_filter(
+                buf_matr, kernel, kernel_size, 0, x, y, image.width, image.height)
+            filtereredG = apply_filter(
+                buf_matr, kernel, kernel_size, 1, x, y, image.width, image.height)
+            filtereredB = apply_filter(
+                buf_matr, kernel, kernel_size, 2, x, y, image.width, image.height)
             rgb = (math.ceil(filtereredR), math.ceil(
                 filtereredG), math.ceil(filtereredB))
-            hsv = rgb_to_hsv(rgb)
-            hsv[2] += 0.7
-            rgb = hsv_to_rgb(hsv)
             pixels[x, y] = rgb
 
     return filtered_image
