@@ -1,5 +1,6 @@
 import math
 
+
 def rgb_to_hsv(rgb):
     r = rgb[0] / 256
     g = rgb[1] / 256
@@ -25,6 +26,14 @@ def rgb_to_hsv(rgb):
     v = max_v
 
     return [h, s, v]
+
+
+def rgb_to_v(rgb):
+    r = rgb[0] / 256
+    g = rgb[1] / 256
+    b = rgb[2] / 256
+
+    return max(r, g, b)
 
 
 def hsv_to_rgb(hsv):

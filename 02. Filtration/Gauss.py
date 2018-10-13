@@ -2,7 +2,7 @@ import math
 
 
 def calculate_kernel(size):
-    SIGMA = 1.5
+    SIGMA = 1.8
     delta = size // 2
     kernel = [[0] * size] * size
 
