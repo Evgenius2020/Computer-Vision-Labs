@@ -21,10 +21,13 @@ def add_button(surface, x_start, text, color):
 
 
 def main():
+    if (sys.argv.__len__() < 2):
+        exit()
+    filename = sys.argv[1]
     pygame.init()
-    lenna = pygame.image.load("Lenna.png")
-    surface = pygame.display.set_mode((lenna.get_width(), lenna.get_height()))
-    surface.blit(lenna, (0, 0))
+    image = pygame.image.load(filename)
+    surface = pygame.display.set_mode((image.get_width(), image.get_height()))
+    surface.blit(image, (0, 0))
 
     button_h_plus = add_button(surface, 0, "H+", [255, 0, 0])
     button_h_minus = add_button(surface, 30, "H-", [255, 50, 0])
@@ -61,7 +64,9 @@ def main():
                 pygame.display.update()
                 draw_histogram(surface)
 
-        rgb = surface.get_at(pygame.mouse.get_pos())
+        mouse_pos = pygame.mouse.get_pos()
+        rgb = surface.get_at(mouse_pos)
+        print("x:{0}, y:{1}".format(mouse_pos[0], mouse_pos[1]))
         print_cordinates("RGB", rgb)
         print_cordinates("HSV", rgb_to_hsv(rgb))
         print_cordinates("LAB", rgb_to_lab(rgb))
