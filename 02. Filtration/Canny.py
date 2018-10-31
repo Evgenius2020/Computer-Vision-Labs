@@ -1,35 +1,90 @@
-from Sobel import sobel_vectors, sobel
+from Sobel import sobel_vectors
 from Gauss import gauss
 from Convertations import hsv_to_rgb
+from Matrix import Matrix
 import math
 
 
-def cmp_direction(vec_matr, x, y, delta_x, delta_y, x_max, y_max):
-    if ((x + delta_x < 0) or (x + delta_x > x_max - 1) or (y + delta_y < 0) or (y + delta_y > y_max - 1)):
-        return vec_matr[y][x][0]
+def cmp_direction(vec_matr, x, y, delta_x, delta_y):
+    value = vec_matr.get(x + delta_x, y + delta_y)
+    if value is None:
+        return vec_matr.raw[y][x][0]
     else:
-        return 0 if (vec_matr[y + delta_y][x + delta_x][0] > vec_matr[y][x][0]) else vec_matr[y][x][0]
+        return 0 \
+            if (value[0] > vec_matr.raw[y][x][0]) else \
+            vec_matr.raw[y][x][0]
 
 
-def filter_non_maximum(vec_matr, x, y, x_max, y_max):
-    angle = vec_matr[y][x][1] * 180 / math.pi
+def filter_non_maximum(vec_matr, x, y):
+    angle = vec_matr.raw[y][x][1] * 180 / math.pi
     angle = (angle // 45) * 45 + 180
     if angle == 0:
-        return cmp_direction(vec_matr, x, y, 0, -1, x_max, y_max)
+        return cmp_direction(vec_matr, x, y, 0, -1)
     elif angle == 45:
-        return cmp_direction(vec_matr, x, y, 1, -1, x_max, y_max)
+        return cmp_direction(vec_matr, x, y, 1, -1)
     elif angle == 90:
-        return cmp_direction(vec_matr, x, y, 1, 0, x_max, y_max)
+        return cmp_direction(vec_matr, x, y, 1, 0)
     elif angle == 135:
-        return cmp_direction(vec_matr, x, y, 1, 1, x_max, y_max)
+        return cmp_direction(vec_matr, x, y, 1, 1)
     elif angle == 180:
-        return cmp_direction(vec_matr, x, y, 0, 1, x_max, y_max)
+        return cmp_direction(vec_matr, x, y, 0, 1)
     elif angle == 225:
-        return cmp_direction(vec_matr, x, y, -1, 1, x_max, y_max)
+        return cmp_direction(vec_matr, x, y, -1, 1)
     elif angle == 270:
-        return cmp_direction(vec_matr, x, y, -1, 0, x_max, y_max)
+        return cmp_direction(vec_matr, x, y, -1, 0)
     elif angle == 315:
-        return cmp_direction(vec_matr, x, y, -1, 1, x_max, y_max)
+        return cmp_direction(vec_matr, x, y, -1, 1)
+
+
+def dispatch_colors(v_matr):
+    colors = Matrix(v_matr.width, v_matr.height)
+    curr_color = 1
+    conflicts = []
+
+    for y in range(0, colors.height):
+        for x in range(0, colors.width):
+            if (v_matr.raw[y][x] == 0):
+                continue
+            neighbours_colors = set()
+            neighbours = ((x - 1, y - 1), (x, y - 1),
+                          (x + 1, y - 1), (x - 1, y))
+            for (neighbour_x, neigbour_y) in neighbours:
+                neighbour_color = colors.get(neighbour_x, neigbour_y)
+                if neighbour_color is not None and neighbour_color != 0:
+                    neighbours_colors.add(neighbour_color)
+            if neighbours_colors.__len__() == 0:
+                colors.raw[y][x] = curr_color
+                curr_color += 1
+            elif neighbours_colors.__len__() == 1:
+                colors.raw[y][x] = neighbours_colors.pop()
+            else:
+                conflicts.append((x, y))
+
+    # print(curr_color)
+    color_mapping = [cl_n for cl_n in range(curr_color)]
+    # print(conflicts.__len__())
+    for (x, y) in conflicts:
+        neighbours = colors.get_neighbours(x, y)
+        min_color = None
+        for (neighbour_x, neighbour_y) in neighbours:
+            neighbour_color = colors.raw[neighbour_y][neighbour_x]
+            if neighbour_color == 0:
+                continue
+            mapped_color = color_mapping[neighbour_color]
+            if (min_color is None or mapped_color < min_color):
+                min_color = mapped_color
+        for (neighbour_x, neighbour_y) in neighbours:
+            mapped_color = color_mapping[colors.raw[neigbour_y][neighbour_x]]
+            color_mapping[mapped_color] = min_color
+        colors.raw[y][x] = min_color
+
+    changed = 0
+    for cl in range(curr_color):
+        if color_mapping[cl] != cl:
+            changed += 1
+    # print(changed)
+
+    return colors, color_mapping, color_mapping.__len__() - changed
 
 
 def canny(image, gauss_kernel_size, gauss_sigma):
@@ -39,14 +94,19 @@ def canny(image, gauss_kernel_size, gauss_sigma):
 
     x_max = image.width
     y_max = image.height
-    v_matr = []
-    for y in range(0, y_max):
-        v_matr.append([])
-        for x in range(0, x_max):
-            v_matr[y].append(filter_non_maximum(vec_matr, x, y, x_max, y_max))
+    v_matr = Matrix(image.width, image.height)
+    for y in range(v_matr.height):
+        for x in range(v_matr.width):
+            v_matr.raw[y][x] = filter_non_maximum(vec_matr, x, y)
 
+    color_matr, color_mapping, colors_n = dispatch_colors(v_matr)
+    # print(colors_n)
+    color_scale_coef = 360 / colors_n
     for y in range(0, y_max):
         for x in range(0, x_max):
-            pixels[x, y] = hsv_to_rgb((0, 0, v_matr[y][x]))
+            color = color_mapping[color_matr.raw[y]
+                                  [x]] * color_scale_coef
+            pixels[x, y] = hsv_to_rgb(
+                (color, 1, 1 if v_matr.raw[y][x] > 0 else 0))
 
     return image

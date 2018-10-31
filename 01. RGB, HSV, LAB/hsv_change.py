@@ -1,5 +1,4 @@
 import pygame
-import time
 from convertations import rgb_to_hsv, hsv_to_rgb
 
 
@@ -22,14 +21,14 @@ def s_plus(hsv):
 
 
 def s_minus(hsv):
-    if (hsv[1] > 0.1):
-        hsv[1] -= 0.1
+    if (hsv[1] > 0.5):
+        hsv[1] -= 0.5
     return hsv
 
 
 def v_plus(hsv):
-    if (hsv[2] < 0.1):
-        hsv[2] += 0.1
+    if (hsv[2] < 0.5):
+        hsv[2] += 0.5
     return hsv
 
 
