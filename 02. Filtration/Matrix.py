@@ -11,9 +11,9 @@ class Matrix:
         return self.raw[y][x]
 
     def apply(self, func):
-        for x in range(self.width):
-            for y in range(self.height):
-                self.raw[x][y] = func(x, y)
+        for y in range(self.height):
+            for x in range(self.width):
+                self.raw[y][x] = func(x, y)
 
     def get_neighbours(self, x, y):
         neigbours = []
