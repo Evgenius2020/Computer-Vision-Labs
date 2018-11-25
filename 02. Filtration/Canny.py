@@ -5,35 +5,47 @@ from Matrix import Matrix
 import math
 
 
-def cmp_direction(vec_matr, x, y, delta_x, delta_y):
-    value = vec_matr.get(x + delta_x, y + delta_y)
-    if value is None:
-        return vec_matr.raw[y][x][0]
+def cmp_direction(vec_matr, x, y, d_x1, d_y1, d_x2, d_y2):
+    v1 = vec_matr.get(x + d_x1, y + d_y1)
+    v2 = vec_matr.get(x + d_x2, y + d_y2)
+    if v1 is None:
+        v1 = 0
     else:
-        return 0 \
-            if (value[0] > vec_matr.raw[y][x][0]) else \
-            vec_matr.raw[y][x][0]
+        v1 = v1[0]
+
+    if v2 is None:
+        v2 = 0
+    else:
+        v2 = v2[0]
+
+    return vec_matr.raw[y][x][0] \
+        if (v1 < vec_matr.raw[y][x][0] and vec_matr.raw[y][x][0] > v2) else \
+        0
 
 
 def filter_non_maximum(vec_matr, x, y):
+    return 0 if vec_matr.raw[y][x][0] < 0.2 else vec_matr.raw[y][x][0]
     angle = vec_matr.raw[y][x][1] * 180 / math.pi
     angle = (angle // 45) * 45 + 180
-    if angle == 0:
-        return cmp_direction(vec_matr, x, y, 0, -1)
+    if angle == 0 or angle == 360:
+        return cmp_direction(vec_matr, x, y, 0, -1, 0, 1)
     elif angle == 45:
-        return cmp_direction(vec_matr, x, y, 1, -1)
+        return cmp_direction(vec_matr, x, y, 1, -1, -1, 1)
     elif angle == 90:
-        return cmp_direction(vec_matr, x, y, 1, 0)
+        return cmp_direction(vec_matr, x, y, 1, 0, -1, 0)
     elif angle == 135:
-        return cmp_direction(vec_matr, x, y, 1, 1)
+        return cmp_direction(vec_matr, x, y, 1, 1, -1, -1)
     elif angle == 180:
-        return cmp_direction(vec_matr, x, y, 0, 1)
+        return cmp_direction(vec_matr, x, y, 0, 1, 0, -1)
     elif angle == 225:
-        return cmp_direction(vec_matr, x, y, -1, 1)
+        return cmp_direction(vec_matr, x, y, -1, 1, 1, -1)
     elif angle == 270:
-        return cmp_direction(vec_matr, x, y, -1, 0)
+        return cmp_direction(vec_matr, x, y, -1, 0, 1, 0)
     elif angle == 315:
-        return cmp_direction(vec_matr, x, y, -1, 1)
+        return cmp_direction(vec_matr, x, y, -1, 1, 1, -1)
+    else:
+        print(angle)
+        return cmp_direction(vec_matr, x, y, 0, -1)
 
 
 def dispatch_colors(v_matr):

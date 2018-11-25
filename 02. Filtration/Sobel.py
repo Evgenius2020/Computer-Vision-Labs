@@ -27,12 +27,7 @@ def filter_vector(image, x, y):
 
 def get_angle(x, y):
     norm = math.sqrt(x**2 + y**2)
-    angle = 0 if norm == 0 else math.acos(x / norm)
-
-    if (y >= 0):
-        return angle
-    else:
-        return 2*math.pi - angle
+    return 0 if norm == 0 else math.acos(x / norm)
 
 
 def sobel(image):

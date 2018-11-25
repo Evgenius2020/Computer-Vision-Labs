@@ -11,9 +11,9 @@ def main():
     filename = sys.argv[1]
     image = Image.open(filename)
 
-    sobel(image).show()
-    gauss(image, 15, 1.8).show()
-    canny(image, 15, 2).show()
+    # sobel(image).show()
+    # gauss(image, 5, 1.8).show()
+    canny(image, 5, 2).show()
 
 
 if __name__ == '__main__':
