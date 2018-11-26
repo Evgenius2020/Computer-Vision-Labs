@@ -12,14 +12,15 @@ def main():
     image = Image.open(filename)
     image.show()
 
-    # image = otsu(image, 7)
-    # image.save("binarized.png")
-    # # image.show()
+    image = otsu(image, 7)
+    image.save("binarized.png")
+    image.show()
 
-    # pattern = m.create_square_pattern(3)
-    # image = m.apply_closing(image, pattern)
-    # image = m.apply_opening(image, pattern)
-    # image.save("processed.png")
+    pattern = m.create_square_pattern(3)
+    image = m.apply_closing(image, pattern)
+    image.show()
+    image = m.apply_opening(image, pattern)
+    image.save("processed.png")
 
     dispatch_colors(image).show()
 
